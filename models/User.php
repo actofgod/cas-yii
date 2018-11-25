@@ -11,13 +11,12 @@ use yii\web\IdentityInterface;
  * @property int $id
  * @property string $username
  * @property string $password
- * @property string|null $auth_key
- * @property string|null $access_token
+ * @property int $points_amount
  */
 class User extends ActiveRecord implements IdentityInterface
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public static function tableName()
     {
@@ -25,7 +24,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function rules()
     {
@@ -36,7 +35,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function attributeLabels()
     {
@@ -44,13 +43,12 @@ class User extends ActiveRecord implements IdentityInterface
             'id' => 'ID',
             'username' => 'User Name',
             'password' => 'Password Hash',
-            'auth_key' => 'Auth Key',
-            'access_token' => 'Access Token',
+            'points_amount' => 'Points Amount',
         ];
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public static function findIdentity($id)
     {
@@ -58,11 +56,11 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        return self::findOne(['access_token' => $token]);
+        return null;
     }
 
     /**
@@ -77,36 +75,34 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getAuthKey()
+    public function getAuthKey(): ?string
     {
-        return $this->auth_key;
+        return null;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function validateAuthKey($authKey)
+    public function validateAuthKey($authKey): bool
     {
-        return $this->auth_key === $authKey;
+        return false;
     }
 
     /**
-     * Validates password
-     *
      * @param string $password password to validate
      * @return bool if password provided is valid for current user
      */
-    public function validatePassword($password)
+    public function validatePassword($password): bool
     {
         return password_verify($password, $this->password);
     }

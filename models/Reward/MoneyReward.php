@@ -5,6 +5,8 @@ namespace app\models\Reward;
 
 use app\models\Reward;
 use app\models\RewardInterface;
+use app\models\UserReward\MoneyUserReward;
+use app\models\UserRewardInterface;
 use yii\db\ActiveRecord;
 
 /**
@@ -44,6 +46,26 @@ class MoneyReward extends ActiveRecord implements RewardInterface
      */
     public function isAvailable(): bool
     {
-        return $this->min_amount < 10000;
+        $roulette = $this->reward->roulette;
+        return $this->min_amount < $roulette->getAvailableMoneyAmount();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function process(UserRewardInterface $userReward): bool
+    {
+        if ($userReward instanceof MoneyUserReward) {
+            $roulette = $this->reward->roulette;
+            $available = $roulette->getAvailableMoneyAmount();
+            if ($this->min_amount > $available) {
+                return false;
+            }
+            $max = $available > $this->max_amount ? $this->max_amount : $available;
+            $userReward->amount = random_int($this->min_amount, $max);
+            $roulette->updateCounters(['current_money_amount' => $userReward->amount]);
+            return true;
+        }
+        return false;
     }
 }

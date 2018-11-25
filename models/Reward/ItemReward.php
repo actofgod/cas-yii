@@ -6,11 +6,12 @@ namespace app\models\Reward;
 use app\models\Item;
 use app\models\Reward;
 use app\models\RewardInterface;
+use app\models\UserRewardInterface;
 use yii\db\ActiveRecord;
 
 /**
  * @property int $id
- * @property int $itemId
+ * @property int $item_id
  * @property Item $item
  * @property Reward $reward
  */
@@ -54,5 +55,13 @@ class ItemReward extends ActiveRecord implements RewardInterface
     public function isAvailable(): bool
     {
         return $this->item->quantity > 0;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function process(UserRewardInterface $userReward): bool
+    {
+        $this->item->updateCounters(['quantity' => -1]);
     }
 }

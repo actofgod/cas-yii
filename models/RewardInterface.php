@@ -3,12 +3,27 @@ declare(strict_types=1);
 
 namespace app\models;
 
+use yii\db\ActiveQuery;
+
 /**
- * @package app\models
+ * @property int $id
+ * @property Reward $reward
  */
 interface RewardInterface
 {
+    /**
+     * @return ActiveQuery
+     */
     public function getReward();
+
+    /**
+     * @return bool
+     */
     public function isAvailable(): bool;
-    //public function apply(User $user): UserReward;
+
+    /**
+     * @param UserRewardInterface $userReward
+     * @return bool
+     */
+    public function process(UserRewardInterface $userReward): bool;
 }

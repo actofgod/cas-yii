@@ -3,13 +3,16 @@ declare(strict_types=1);
 
 namespace app\models;
 
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
  * @property int $id
+ * @property int $roulette_id
  * @property int $type_id
  * @property float $weight
  * @property RewardInterface $actualReward
+ * @property Roulette $roulette
  */
 class Reward extends ActiveRecord
 {
@@ -24,6 +27,14 @@ class Reward extends ActiveRecord
     public static function tableName()
     {
         return 'rewards';
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getRoulette(): ActiveQuery
+    {
+        return $this->hasOne(Roulette::class, ['id' => 'roulette_id']);
     }
 
     /**

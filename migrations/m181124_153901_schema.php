@@ -39,20 +39,31 @@ class m181124_153901_schema extends Migration
         $this->insert('items', ['name' => 'item#2', 'quantity' => 10, 'created_at' => date('Y-m-d H:i:s')]);
         $this->insert('items', ['name' => 'item#3', 'quantity' => 15, 'created_at' => date('Y-m-d H:i:s')]);
 
+        $this->createTable('roulette', [
+            'id' => $this->primaryKey(),
+            'max_money_amount' => $this->integer()->notNull(),
+            'current_money_amount' => $this->integer()->notNull(),
+        ]);
+        $this->insert('roulette', ['max_money_amount' => 10000, 'current_money_amount' => 0]);
+
         $this->createTable('rewards', [
             'id' => $this->primaryKey(),
+            'roulette_id' => $this->integer()->notNull(),
             'type_id' => $this->smallInteger()->notNull(),
             'weight' => $this->float()->notNull(),
         ]);
-        $this->insert('rewards', ['type_id' => 1, 'weight' => 1.0]);
-        $this->insert('rewards', ['type_id' => 1, 'weight' => 1.0]);
-        $this->insert('rewards', ['type_id' => 1, 'weight' => 1.0]);
-        $this->insert('rewards', ['type_id' => 2, 'weight' => 1.0]);
-        $this->insert('rewards', ['type_id' => 2, 'weight' => 1.0]);
-        $this->insert('rewards', ['type_id' => 2, 'weight' => 1.0]);
-        $this->insert('rewards', ['type_id' => 3, 'weight' => 1.0]);
-        $this->insert('rewards', ['type_id' => 3, 'weight' => 1.0]);
-        $this->insert('rewards', ['type_id' => 3, 'weight' => 1.0]);
+        $this->insert('rewards', ['type_id' => 1, 'roulette_id' => 1, 'weight' => 1.0]);
+        $this->insert('rewards', ['type_id' => 1, 'roulette_id' => 1, 'weight' => 1.0]);
+        $this->insert('rewards', ['type_id' => 1, 'roulette_id' => 1, 'weight' => 1.0]);
+        $this->insert('rewards', ['type_id' => 2, 'roulette_id' => 1, 'weight' => 1.0]);
+        $this->insert('rewards', ['type_id' => 2, 'roulette_id' => 1, 'weight' => 1.0]);
+        $this->insert('rewards', ['type_id' => 2, 'roulette_id' => 1, 'weight' => 1.0]);
+        $this->insert('rewards', ['type_id' => 3, 'roulette_id' => 1, 'weight' => 1.0]);
+        $this->insert('rewards', ['type_id' => 3, 'roulette_id' => 1, 'weight' => 1.0]);
+        $this->insert('rewards', ['type_id' => 3, 'roulette_id' => 1, 'weight' => 1.0]);
+
+        $this->createIndex('rewards_idx_roulette_id', 'rewards', 'roulette_id');
+        $this->addForeignKey('rewards_fk_roulette', 'rewards', 'roulette_id', 'roulette', 'id', 'RESTRICT', 'RESTRICT');
 
         $this->createTable('reward_items', [
             'id' => $this->integer()->notNull()->append(' PRIMARY KEY'),
@@ -87,6 +98,37 @@ class m181124_153901_schema extends Migration
         $this->insert('reward_points', ['id' => 9, 'min_amount' => 1000, 'max_amount' => 4999]);
 
         $this->addForeignKey('reward_points_fk_reward', 'reward_points', 'id', 'rewards', 'id', 'RESTRICT', 'RESTRICT');
+
+        $this->createTable('user_rewards', [
+            'id' => $this->primaryKey(),
+            'status_id' => $this->smallInteger()->notNull(),
+            'user_id' => $this->integer()->notNull(),
+            'reward_id' => $this->integer()->notNull(),
+            'created_at' => $this->dateTime()->notNull(),
+            'expire_in' => $this->dateTime()->notNull(),
+        ]);
+
+        $this->createIndex('user_rewards_idx_user_id', 'user_rewards', 'user_id');
+        $this->createIndex('user_rewards_idx_reward_id', 'user_rewards', 'reward_id');
+        $this->createIndex('user_rewards_idx_expire_in', 'user_rewards', 'expire_in');
+        $this->addForeignKey('user_rewards_fk_reward', 'user_rewards', 'reward_id', 'rewards', 'id', 'RESTRICT', 'RESTRICT');
+
+        $this->createTable('user_reward_items', [
+            'id' => $this->integer()->notNull()->append(' PRIMARY KEY'),
+        ]);
+        $this->addForeignKey('user_reward_items_fk_user_reward', 'user_reward_items', 'id', 'user_rewards', 'id', 'RESTRICT', 'RESTRICT');
+
+        $this->createTable('user_reward_money', [
+            'id' => $this->integer()->notNull()->append(' PRIMARY KEY'),
+            'amount' => $this->integer()->notNull(),
+        ]);
+        $this->addForeignKey('user_reward_money_fk_user_reward', 'user_reward_money', 'id', 'user_rewards', 'id', 'RESTRICT', 'RESTRICT');
+
+        $this->createTable('user_reward_points', [
+            'id' => $this->integer()->notNull()->append(' PRIMARY KEY'),
+            'amount' => $this->integer()->notNull(),
+        ]);
+        $this->addForeignKey('user_reward_points_fk_user_reward', 'user_reward_points', 'id', 'user_rewards', 'id', 'RESTRICT', 'RESTRICT');
     }
 
     /**
@@ -94,11 +136,16 @@ class m181124_153901_schema extends Migration
      */
     public function down()
     {
+        $this->dropTable('user_reward_points');
+        $this->dropTable('user_reward_money');
+        $this->dropTable('user_reward_items');
+        $this->dropTable('user_rewards');
         $this->dropTable('reward_points');
         $this->dropTable('reward_money');
         $this->dropTable('reward_items');
         $this->dropTable('items');
         $this->dropTable('rewards');
+        $this->dropTable('roulette');
         $this->dropTable('users');
     }
 }
