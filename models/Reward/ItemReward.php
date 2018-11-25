@@ -6,6 +6,7 @@ namespace app\models\Reward;
 use app\models\Item;
 use app\models\Reward;
 use app\models\RewardInterface;
+use app\models\UserReward\ItemUserReward;
 use app\models\UserRewardInterface;
 use yii\db\ActiveRecord;
 
@@ -62,6 +63,10 @@ class ItemReward extends ActiveRecord implements RewardInterface
      */
     public function process(UserRewardInterface $userReward): bool
     {
-        $this->item->updateCounters(['quantity' => -1]);
+        if ($userReward instanceof ItemUserReward) {
+            $this->item->updateCounters(['quantity' => -1]);
+            return true;
+        }
+        return false;
     }
 }

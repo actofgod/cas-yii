@@ -5,6 +5,8 @@ namespace app\models\UserReward;
 
 use app\models\UserReward;
 use app\models\UserRewardInterface;
+use app\models\UserWithdraw;
+use app\models\UserWithdrawStatus;
 use yii\db\ActiveRecord;
 
 /**
@@ -35,6 +37,13 @@ class MoneyUserReward extends ActiveRecord implements UserRewardInterface
      */
     public function claim(): void
     {
+        $withdraw = new UserWithdraw();
+        $withdraw->user_id = $this->userReward->user_id;
+        $withdraw->reward_id = $this->id;
+        $withdraw->amount = $this->amount;
+        $withdraw->status_id = UserWithdrawStatus::WAITING;
+        $withdraw->created_at = date('Y-m-d H:i:s');
+        $withdraw->save();
     }
 
     /**

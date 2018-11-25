@@ -16,17 +16,17 @@ class m181124_153901_schema extends Migration
             'id' => $this->primaryKey(),
             'username' => $this->string(64)->notNull(),
             'password' => $this->string(64)->notNull(),
-            'auth_key' => $this->string(64),
-            'access_token' => $this->string(64),
+            'points_amount' => $this->integer()->notNull(),
         ]);
-        $this->createIndex('users_idx_access_token', 'users', 'access_token');
         $this->insert('users', [
             'username' => 'test',
             'password' => password_hash('test', PASSWORD_BCRYPT),
+            'points_amount' => 0,
         ]);
         $this->insert('users', [
             'username' => 'demo',
             'password' => password_hash('demo', PASSWORD_BCRYPT),
+            'points_amount' => 0,
         ]);
 
         $this->createTable('items', [
@@ -129,6 +129,52 @@ class m181124_153901_schema extends Migration
             'amount' => $this->integer()->notNull(),
         ]);
         $this->addForeignKey('user_reward_points_fk_user_reward', 'user_reward_points', 'id', 'user_rewards', 'id', 'RESTRICT', 'RESTRICT');
+
+        $this->createTable('user_post_packages', [
+            'id' => $this->primaryKey(),
+            'status_id' => $this->smallInteger()->notNull(),
+            'item_id' => $this->integer()->notNull(),
+            'user_id' => $this->integer()->notNull(),
+            'reward_id' => $this->integer()->notNull(),
+            'created_at' => $this->dateTime()->notNull(),
+        ]);
+        $this->createIndex('user_post_packages_idx_item_id', 'user_post_packages', 'item_id');
+        $this->createIndex('user_post_packages_idx_user_id', 'user_post_packages', 'user_id');
+        $this->createIndex('user_post_packages_idx_reward_id', 'user_post_packages', 'reward_id');
+        $this->addForeignKey('user_post_packages_fk_item', 'user_post_packages', 'item_id', 'items', 'id', 'RESTRICT', 'RESTRICT');
+        $this->addForeignKey('user_post_packages_fk_user', 'user_post_packages', 'user_id', 'users', 'id', 'RESTRICT', 'RESTRICT');
+        $this->addForeignKey('user_post_packages_fk_reward', 'user_post_packages', 'reward_id', 'user_reward_items', 'id', 'RESTRICT', 'RESTRICT');
+
+        $this->createTable('user_post_package_history', [
+            'id' => $this->primaryKey(),
+            'status_id' => $this->smallInteger()->notNull(),
+            'package_id' => $this->integer()->notNull(),
+            'date' => $this->dateTime()->notNull(),
+        ]);
+        $this->createIndex('user_post_package_history_idx_package_id', 'user_post_package_history', 'package_id');
+        $this->addForeignKey('user_post_package_history_fk_package', 'user_post_package_history', 'package_id', 'user_post_packages', 'id', 'RESTRICT', 'RESTRICT');
+
+        $this->createTable('user_withdraws', [
+            'id' => $this->primaryKey(),
+            'status_id' => $this->smallInteger()->notNull(),
+            'amount' => $this->integer()->notNull(),
+            'user_id' => $this->integer()->notNull(),
+            'reward_id' => $this->integer()->notNull(),
+            'created_at' => $this->dateTime()->notNull(),
+        ]);
+        $this->createIndex('user_withdraws_idx_user_id', 'user_withdraws', 'user_id');
+        $this->createIndex('user_withdraws_idx_reward_id', 'user_withdraws', 'reward_id');
+        $this->addForeignKey('user_withdraws_fk_user', 'user_withdraws', 'user_id', 'users', 'id', 'RESTRICT', 'RESTRICT');
+        $this->addForeignKey('user_withdraws_fk_reward', 'user_withdraws', 'reward_id', 'user_reward_money', 'id', 'RESTRICT', 'RESTRICT');
+
+        $this->createTable('user_withdraw_history', [
+            'id' => $this->primaryKey(),
+            'status_id' => $this->smallInteger()->notNull(),
+            'withdraw_id' => $this->integer()->notNull(),
+            'date' => $this->dateTime()->notNull(),
+        ]);
+        $this->createIndex('user_withdraw_history_idx_package_id', 'user_withdraw_history', 'withdraw_id');
+        $this->addForeignKey('user_withdraw_history_fk_package', 'user_withdraw_history', 'withdraw_id', 'user_withdraws', 'id', 'RESTRICT', 'RESTRICT');
     }
 
     /**
@@ -136,6 +182,10 @@ class m181124_153901_schema extends Migration
      */
     public function down()
     {
+        $this->dropTable('user_withdraw_history');
+        $this->dropTable('user_withdraws');
+        $this->dropTable('user_post_package_history');
+        $this->dropTable('user_post_packages');
         $this->dropTable('user_reward_points');
         $this->dropTable('user_reward_money');
         $this->dropTable('user_reward_items');

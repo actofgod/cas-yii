@@ -3,8 +3,9 @@ declare(strict_types=1);
 
 namespace app\models\UserReward;
 
-
 use app\models\Item;
+use app\models\PostPackage;
+use app\models\PostPackageStatus;
 use app\models\Reward\ItemReward;
 use app\models\UserReward;
 use app\models\UserRewardInterface;
@@ -37,6 +38,16 @@ class ItemUserReward extends ActiveRecord implements UserRewardInterface
      */
     public function claim(): void
     {
+        /** @var Item $item */
+        $item =  $this->userReward->reward->actualReward->item;
+
+        $package = new PostPackage();
+        $package->item_id = $item->id;
+        $package->user_id = $this->userReward->user_id;
+        $package->reward_id = $this->id;
+        $package->status_id = PostPackageStatus::WAITING;
+        $package->created_at = date('Y-m-d H:i:s');
+        $package->save();
     }
 
     /**
@@ -56,7 +67,7 @@ class ItemUserReward extends ActiveRecord implements UserRewardInterface
     public function jsonSerialize(): array
     {
         /** @var Item $item */
-        $item =  $this->userReward->reward->item;
+        $item =  $this->userReward->reward->actualReward->item;
         return [
             'item' => [
                 'id'   => $item->id,

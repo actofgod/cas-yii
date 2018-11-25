@@ -100,6 +100,7 @@ class RouletteService
             $transaction->commit();
         } catch (\Throwable $exception) {
             $transaction->rollBack();
+            throw $exception;
         }
     }
 
@@ -120,10 +121,9 @@ class RouletteService
     }
 
     /**
-     * @param User $user
-     * @return UserReward|null
+     *
      */
-    public function findCurrentReward(User $user): ?UserReward
+    public function rejectExpiredRewards(): void
     {
         $expiredDataSet = UserReward::find()->where(
             'status_id = :status AND expire_in <= :now',
@@ -135,7 +135,15 @@ class RouletteService
         foreach ($expiredDataSet as $record) {
             $this->reject($record);
         }
+    }
 
+    /**
+     * @param User $user
+     * @return UserReward|null
+     */
+    public function findCurrentReward(User $user): ?UserReward
+    {
+        $this->rejectExpiredRewards();
         return UserReward::find()->where(
             'user_id = :userId AND status_id = :status AND expire_in > :now',
             [
