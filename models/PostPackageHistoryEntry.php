@@ -7,12 +7,12 @@ use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
- * @param int $id
- * @param int $package_id
- * @param int $status_id
- * @param string $date
- * @param \DateTimeInterface $dateInstance
- * @param PostPackage $package
+ * @property int $id
+ * @property int $status_id
+ * @property int $package_id
+ * @property string $date
+ * @property-read \DateTimeInterface $dateInstance
+ * @property-read PostPackage $package
  */
 class PostPackageHistoryEntry extends ActiveRecord
 {
@@ -30,9 +30,41 @@ class PostPackageHistoryEntry extends ActiveRecord
     }
 
     /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['status_id', 'package_id', 'date'], 'required'],
+            [['status_id', 'package_id'], 'integer'],
+            [['date'], 'safe'],
+            [
+                ['package_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => PostPackage::class,
+                'targetAttribute' => ['package_id' => 'id']
+            ],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'status_id' => 'Status',
+            'package_id' => 'Package',
+            'date' => 'Date',
+        ];
+    }
+
+    /**
      * @return ActiveQuery
      */
-    public function getWithdraw(): ActiveQuery
+    public function getPackage(): ActiveQuery
     {
         return $this->hasOne(PostPackage::class, ['id' => 'package_id']);
     }

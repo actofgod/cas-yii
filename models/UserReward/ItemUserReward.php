@@ -28,6 +28,35 @@ class ItemUserReward extends ActiveRecord implements UserRewardInterface
     /**
      * @inheritdoc
      */
+    public function rules()
+    {
+        return [
+            [['id'], 'required'],
+            [['id'], 'integer'],
+            [['id'], 'unique'],
+            [
+                ['id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => UserReward::class,
+                'targetAttribute' => ['id' => 'id']
+            ],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getUserReward()
     {
         return $this->hasOne(UserReward::class, ['id' => 'id']);

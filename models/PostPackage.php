@@ -13,9 +13,11 @@ use yii\db\ActiveRecord;
  * @property int $reward_id
  * @property int $status_id
  * @property string $created_at
+ *
  * @property-read Item $item
  * @property-read User $user
  * @property-read UserReward\ItemUserReward
+ * @property-read PostPackageHistoryEntry[] $history
  */
 class PostPackage extends ActiveRecord
 {
@@ -25,6 +27,54 @@ class PostPackage extends ActiveRecord
     public static function tableName()
     {
         return 'user_post_packages';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['status_id', 'item_id', 'user_id', 'reward_id', 'created_at'], 'required'],
+            [['status_id', 'item_id', 'user_id', 'reward_id'], 'integer'],
+            [['created_at'], 'safe'],
+            [
+                ['item_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Item::class,
+                'targetAttribute' => ['item_id' => 'id']
+            ],
+            [
+                ['reward_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => UserReward\ItemUserReward::class,
+                'targetAttribute' => ['reward_id' => 'id']
+            ],
+            [
+                ['user_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => User::class,
+                'targetAttribute' => ['user_id' => 'id']
+            ],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'status_id' => 'Status',
+            'item_id' => 'Item',
+            'user_id' => 'User',
+            'reward_id' => 'Reward',
+            'created_at' => 'Created At',
+        ];
     }
 
     /**
@@ -41,6 +91,14 @@ class PostPackage extends ActiveRecord
     public function getUser(): ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getItem(): ActiveQuery
+    {
+        return $this->hasOne(Item::class, ['id' => 'item_id']);
     }
 
     /**

@@ -30,6 +30,38 @@ class UserWithdrawHistoryEntry extends ActiveRecord
     }
 
     /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['status_id', 'withdraw_id', 'date'], 'required'],
+            [['status_id', 'withdraw_id'], 'integer'],
+            [['date'], 'safe'],
+            [
+                ['withdraw_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => UserWithdraw::class,
+                'targetAttribute' => ['withdraw_id' => 'id'],
+            ],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'status_id' => 'Status',
+            'withdraw_id' => 'Withdraw',
+            'date' => 'Date',
+        ];
+    }
+
+    /**
      * @return ActiveQuery
      */
     public function getWithdraw(): ActiveQuery

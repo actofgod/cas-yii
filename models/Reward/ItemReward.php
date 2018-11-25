@@ -27,6 +27,43 @@ class ItemReward extends ActiveRecord implements RewardInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['id', 'item_id'], 'required'],
+            [['id', 'item_id'], 'integer'],
+            [['id'], 'unique'],
+            [
+                ['item_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Item::class,
+                'targetAttribute' => ['item_id' => 'id']
+            ],
+            [
+                ['id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Reward::class,
+                'targetAttribute' => ['id' => 'id']
+            ],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'item_id' => 'Item',
+        ];
+    }
+
+    /**
      * @return int
      */
     public function getId(): int

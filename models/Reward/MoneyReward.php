@@ -26,6 +26,37 @@ class MoneyReward extends ActiveRecord implements RewardInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['id', 'min_amount', 'max_amount'], 'required'],
+            [['id', 'min_amount', 'max_amount'], 'integer'],
+            [['id'], 'unique'],
+            [
+                ['id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Reward::class,
+                'targetAttribute' => ['id' => 'id']
+            ],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'min_amount' => 'Min Amount',
+            'max_amount' => 'Max Amount',
+        ];
+    }
+
+    /**
      * @return int
      */
     public function getId(): int

@@ -17,6 +17,7 @@ use yii\db\ActiveRecord;
  * @property-read UserReward\MoneyUserReward $reward
  * @property-read UserWithdrawStatus $status
  * @property-read User $user
+ * @property-read UserWithdrawHistoryEntry[] $history
  */
 class UserWithdraw extends ActiveRecord
 {
@@ -26,6 +27,49 @@ class UserWithdraw extends ActiveRecord
     public static function tableName()
     {
         return 'user_withdraws';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['status_id', 'amount', 'user_id', 'reward_id', 'created_at'], 'required'],
+            [['status_id', 'amount', 'user_id', 'reward_id'], 'integer'],
+            [['created_at'], 'safe'],
+            [['transaction_id'], 'string', 'max' => 127],
+            [
+                ['reward_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => UserReward\MoneyUserReward::class,
+                'targetAttribute' => ['reward_id' => 'id']
+            ],
+            [
+                ['user_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => User::class,
+                'targetAttribute' => ['user_id' => 'id']
+            ],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'status_id' => 'Status',
+            'amount' => 'Amount',
+            'user_id' => 'User',
+            'reward_id' => 'Reward',
+            'created_at' => 'Created At',
+            'transaction_id' => 'Transaction ID',
+        ];
     }
 
     /**

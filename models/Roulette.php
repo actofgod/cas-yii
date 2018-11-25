@@ -23,6 +23,29 @@ class Roulette extends ActiveRecord
     }
 
     /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['max_money_amount', 'current_money_amount'], 'required'],
+            [['max_money_amount', 'current_money_amount'], 'integer'],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'max_money_amount' => 'Max Money Amount',
+            'current_money_amount' => 'Current Money Amount',
+        ];
+    }
+
+    /**
      * @return int
      */
     public function getAvailableMoneyAmount(): int

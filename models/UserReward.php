@@ -52,6 +52,40 @@ class UserReward extends ActiveRecord implements \JsonSerializable
     }
 
     /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['status_id', 'user_id', 'reward_id', 'created_at', 'expire_in'], 'required'],
+            [['status_id', 'user_id', 'reward_id'], 'integer'],
+            [['created_at', 'expire_in'], 'safe'],
+            [
+                ['reward_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Reward::class,
+                'targetAttribute' => ['reward_id' => 'id']
+            ],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'status_id' => 'Status',
+            'user_id' => 'User',
+            'reward_id' => 'Reward',
+            'created_at' => 'Created At',
+            'expire_in' => 'Expire In',
+        ];
+    }
+
+    /**
      * @return RewardStatus
      */
     public function getStatus(): RewardStatus

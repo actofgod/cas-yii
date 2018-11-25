@@ -27,6 +27,36 @@ class MoneyUserReward extends ActiveRecord implements UserRewardInterface
     /**
      * @inheritdoc
      */
+    public function rules()
+    {
+        return [
+            [['id', 'amount'], 'required'],
+            [['id', 'amount'], 'integer'],
+            [['id'], 'unique'],
+            [
+                ['id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => UserReward::class,
+                'targetAttribute' => ['id' => 'id']
+            ],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'amount' => 'Amount',
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getUserReward()
     {
         return $this->hasOne(UserReward::class, ['id' => 'id']);

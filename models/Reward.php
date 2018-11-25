@@ -11,8 +11,8 @@ use yii\db\ActiveRecord;
  * @property int $roulette_id
  * @property int $type_id
  * @property float $weight
- * @property RewardInterface $actualReward
- * @property Roulette $roulette
+ * @property-read RewardInterface $actualReward
+ * @property-read Roulette $roulette
  */
 class Reward extends ActiveRecord
 {
@@ -27,6 +27,38 @@ class Reward extends ActiveRecord
     public static function tableName()
     {
         return 'rewards';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['roulette_id', 'type_id', 'weight'], 'required'],
+            [['roulette_id', 'type_id'], 'integer'],
+            [['weight'], 'number'],
+            [
+                ['roulette_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Roulette::class,
+                'targetAttribute' => ['roulette_id' => 'id']
+            ],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'roulette_id' => 'Roulette',
+            'type_id' => 'Type',
+            'weight' => 'Weight',
+        ];
     }
 
     /**
