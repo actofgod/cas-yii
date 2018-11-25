@@ -112,6 +112,7 @@ class m181124_153901_schema extends Migration
         $this->createIndex('user_rewards_idx_reward_id', 'user_rewards', 'reward_id');
         $this->createIndex('user_rewards_idx_expire_in', 'user_rewards', 'expire_in');
         $this->addForeignKey('user_rewards_fk_reward', 'user_rewards', 'reward_id', 'rewards', 'id', 'RESTRICT', 'RESTRICT');
+        $this->addForeignKey('user_rewards_fk_user', 'user_rewards', 'user_id', 'users', 'id', 'RESTRICT', 'RESTRICT');
 
         $this->createTable('user_reward_items', [
             'id' => $this->integer()->notNull()->append(' PRIMARY KEY'),
