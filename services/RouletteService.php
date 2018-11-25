@@ -121,6 +121,27 @@ class RouletteService
     }
 
     /**
+     * @param UserReward $userReward
+     */
+    public function convert(UserReward $userReward): void
+    {
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            if (!$userReward->actualReward->canConvert()) {
+                throw new \RuntimeException('Invalid reward type');
+            }
+
+            $userReward->actualReward->convert();
+            $userReward->status_id = RewardStatus::CONVERTED;
+            $userReward->save();
+
+            $transaction->commit();
+        } catch (\Throwable $exception) {
+            $transaction->rollBack();
+        }
+    }
+
+    /**
      *
      */
     public function rejectExpiredRewards(): void

@@ -57,7 +57,7 @@ class RouletteController extends Controller
     /**
      * @return array
      */
-    public function actionRotate()
+    public function actionRotate(): array
     {
         $reward = $this->getService()->findCurrentReward(Yii::$app->user);
         if (null === $reward) {
@@ -73,7 +73,7 @@ class RouletteController extends Controller
     /**
      * @return array
      */
-    public function actionClaim()
+    public function actionClaim(): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -94,7 +94,7 @@ class RouletteController extends Controller
     /**
      * @return array
      */
-    public function actionReject()
+    public function actionReject(): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -106,6 +106,27 @@ class RouletteController extends Controller
             ];
         }
         $this->getService()->reject($reward);
+        return [
+            'success' => true,
+            'reward'  => $reward,
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function actionConvert(): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $reward = $this->getService()->findCurrentReward(Yii::$app->user);
+        if (null === $reward) {
+            return [
+                'success' => false,
+                'error' => 'Actual reward does not exists',
+            ];
+        }
+        $this->getService()->convert($reward);
         return [
             'success' => true,
             'reward'  => $reward,

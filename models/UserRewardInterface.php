@@ -18,4 +18,14 @@ interface UserRewardInterface extends \JsonSerializable
      *
      */
     public function reject(): void;
+
+    /**
+     * @return bool
+     */
+    public function canConvert(): bool;
+
+    /**
+     *
+     */
+    public function convert(): void;
 }

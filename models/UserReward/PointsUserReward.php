@@ -79,6 +79,22 @@ class PointsUserReward extends ActiveRecord implements UserRewardInterface
     /**
      * @inheritdoc
      */
+    public function canConvert(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function convert(): void
+    {
+        throw new \BadMethodCallException();
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function jsonSerialize(): array
     {
         return [

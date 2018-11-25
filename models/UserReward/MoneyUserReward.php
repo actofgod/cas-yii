@@ -7,6 +7,7 @@ use app\models\UserReward;
 use app\models\UserRewardInterface;
 use app\models\UserWithdraw;
 use app\models\UserWithdrawStatus;
+use app\services\MoneyToPointsConverter;
 use yii\db\ActiveRecord;
 
 /**
@@ -83,6 +84,28 @@ class MoneyUserReward extends ActiveRecord implements UserRewardInterface
     {
         $roulette = $this->userReward->reward->roulette;
         $roulette->updateCounters(['current_money_amount' => -$this->amount]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function canConvert(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function convert(): void
+    {
+        $roulette = $this->userReward->reward->roulette;
+        $roulette->updateCounters(['current_money_amount' => -$this->amount]);
+
+        $user = $this->userReward->user;
+        $converter = new MoneyToPointsConverter();
+        $amount = $converter->convert($this->amount);
+        $user->updateCounters(['points_amount' => $amount]);
     }
 
     /**

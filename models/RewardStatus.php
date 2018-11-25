@@ -13,6 +13,7 @@ class RewardStatus
     const WAITING = 1;
     const CLAIMED = 2;
     const REJECTED = 3;
+    const CONVERTED = 4;
 
     /**
      * @var int
@@ -90,6 +91,14 @@ class RewardStatus
     /**
      * @return bool
      */
+    public function isConverted(): bool
+    {
+        return self::CONVERTED === $this->id;
+    }
+
+    /**
+     * @return bool
+     */
     public function isValid(): bool
     {
         return self::UNKNOWN !== $this->id;
@@ -106,6 +115,7 @@ class RewardStatus
                 self::WAITING => new self(self::WAITING, 'waiting'),
                 self::CLAIMED => new self(self::CLAIMED, 'claimed'),
                 self::REJECTED => new self(self::REJECTED, 'rejected'),
+                self::CONVERTED => new self(self::CONVERTED, 'converted'),
             ];
         }
         return self::$statusList;

@@ -19,6 +19,7 @@ $this->title = 'My Yii Application';
         </p>
         <p>
             <button class="btn btn-lg btn-success" data-action="claim">Claim reward</button>
+            <button id="convert-button" class="btn btn-lg btn-warning" data-action="convert">Convert to points</button>
             <button class="btn btn-lg btn-danger" data-action="reject">Reject reward</button>
         </p>
     </div>
@@ -49,10 +50,13 @@ $this->title = 'My Yii Application';
             var resultText = '';
             if (res.type === 'item') {
                 resultText = res.item.name;
+                jQuery('#convert-button').css({display:'none'});
             } else if (res.type === 'money') {
                 resultText = '$' + res.amount;
+                jQuery('#convert-button').css({display:'inline-block'});
             } else if (res.type === 'points') {
                 resultText = res.amount + ' bonus points';
+                jQuery('#convert-button').css({display:'none'});
             }
             jQuery('#reward-block').text(resultText);
             roulette.css({display:'none'});
