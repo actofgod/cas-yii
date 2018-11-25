@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace app\commands;
 
 use app\models\UserWithdraw;
+use app\models\UserWithdrawHistoryEntry;
 use app\models\UserWithdrawStatus;
 use app\services\WithdrawDummyGateService;
 use yii\console\Controller;
@@ -51,6 +52,13 @@ class ProcessWithdrawsController extends Controller
                     $withdraw->transaction_id = $res;
                 }
                 $withdraw->save();
+
+                $historyEntry = new UserWithdrawHistoryEntry();
+                $historyEntry->status_id = UserWithdrawStatus::REJECTED;
+                $historyEntry->withdraw_id = $withdraw->id;
+                $historyEntry->date = date('Y-m-d H:i:s');
+                $historyEntry->save();
+
                 $count++;
             }
             if ($count >= $max) {

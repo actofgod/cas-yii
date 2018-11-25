@@ -7,12 +7,12 @@ use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
- * @param int $id
- * @param int $withdraw_id
- * @param int $status_id
- * @param string $date
- * @param \DateTimeInterface $dateInstance
- * @param UserWithdraw $withdraw
+ * @property int $id
+ * @property int $withdraw_id
+ * @property int $status_id
+ * @property string $date
+ * @property \DateTimeInterface $dateInstance
+ * @property UserWithdraw $withdraw
  */
 class UserWithdrawHistoryEntry extends ActiveRecord
 {
