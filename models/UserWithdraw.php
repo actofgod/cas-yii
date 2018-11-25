@@ -12,6 +12,7 @@ use yii\db\ActiveRecord;
  * @property int $reward_id
  * @property int $amount
  * @property int $status_id
+ * @property string|null $transaction_id
  * @property string $created_at
  * @property-read UserReward\MoneyUserReward $reward
  * @property-read UserWithdrawStatus $status

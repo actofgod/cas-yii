@@ -161,6 +161,7 @@ class m181124_153901_schema extends Migration
             'user_id' => $this->integer()->notNull(),
             'reward_id' => $this->integer()->notNull(),
             'created_at' => $this->dateTime()->notNull(),
+            'transaction_id' => $this->string(127)->null(),
         ]);
         $this->createIndex('user_withdraws_idx_user_id', 'user_withdraws', 'user_id');
         $this->createIndex('user_withdraws_idx_reward_id', 'user_withdraws', 'reward_id');
